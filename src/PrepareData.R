@@ -1,6 +1,8 @@
 clean <- function(data) {
   data <- remove_id_columns(data)
+  data <- fill_empty_with_NA(data)
   data <- fill_nan(data)
+  data <- transform_to_factor(data)
   
   return(data)
 }
@@ -54,3 +56,30 @@ number_of_unique_value <- function(col) {
   count <- length(count[[1]])
   return(count)
 }
+
+transform_to_factor <- function(data, required_unique_number = 5) {
+  for( col_number in 1:ncol(data))
+  {
+    if(number_of_unique_value(data[col_number]) <= required_unique_number)
+    {
+      data[col_number] <- as.factor(unlist(data[col_number]))
+    }
+  }
+  return(data)
+}
+
+fill_empty_with_NA <- function(data) {
+  for( col_number in 1:ncol(data))
+  {
+    col <- data[col_number]
+    col[which(col == ""), ] <- NA
+    data[col_number] <- col
+  }
+  return(data)
+}
+
+
+
+
+
+
