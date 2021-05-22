@@ -10,6 +10,4 @@ install_packages <- function() {
   )
   
   install.packages(packages)
-  
-  
 }
