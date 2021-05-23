@@ -6,7 +6,6 @@
 #' @param data.frame
 #' @return modified data.frame
 clean <- function(data) {
-  data <- remove_id_columns(data)
   data <- fill_empty_with_NA(data)
   data <- fill_nan(data)
   data <- transform_to_factor(data)
@@ -14,15 +13,24 @@ clean <- function(data) {
   return(data)
 }
 
-#' remove column contains 'id'
-#' @param data.frame
+#' remove column with index == idx
+#' @param data.frame and column index
 #' @return modified data.frame
-remove_id_columns <- function(data) {
-  names <- tolower(colnames(data))
-  idx <- grepl('id', names)
+remove_column <- function(data, idx) {
   data = data[, -idx]
   return(data)
 }
+
+#' remove column with colname == name
+#' @param data.frame
+#' @return modified data.frame
+remove_column <- function(data, name) {
+  idx <- which(colnames(data) == name)
+  data = data[, -idx]
+  return(data)
+}
+
+
 
 #' fill nan values
 #' TODO: implement fill_nan_in_nonnumeric_data(data)
