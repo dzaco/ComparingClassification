@@ -1,3 +1,10 @@
+#' Basic clean of data
+#' - Remove id column
+#' - fill empty rows with NA symbol
+#' - fill NA rows with mean for numeric columns
+#' - transform to factor columns with small number of unique value - default 5 unique values
+#' @param data.frame
+#' @return modified data.frame
 clean <- function(data) {
   data <- remove_id_columns(data)
   data <- fill_empty_with_NA(data)
@@ -7,6 +14,9 @@ clean <- function(data) {
   return(data)
 }
 
+#' remove column contains 'id'
+#' @param data.frame
+#' @return modified data.frame
 remove_id_columns <- function(data) {
   names <- tolower(colnames(data))
   idx <- grepl('id', names)
@@ -14,12 +24,19 @@ remove_id_columns <- function(data) {
   return(data)
 }
 
+#' fill nan values
+#' TODO: implement fill_nan_in_nonnumeric_data(data)
+#' @param data.frame
+#' @return modified data.frame
 fill_nan <- function(data) {
   data <- fill_nan_in_numeric_data(data)
   
   return(data)
 }
 
+#' fill nan values in numeric columns
+#' @param data.frame
+#' @return modified data.frame
 fill_nan_in_numeric_data <- function(data) {
   for( col_number in 1:ncol(data))
   {
@@ -31,6 +48,9 @@ fill_nan_in_numeric_data <- function(data) {
   return(data)
 }
 
+#' fill nan values in single column
+#' @param single column as list
+#' @return modified column as list
 fill_nan_in_numeric_col <- function(col) {
   if(anyNA(col)) {
     col_vector <- unlist(col)
@@ -39,6 +59,10 @@ fill_nan_in_numeric_col <- function(col) {
   return(col)
 }
 
+#' check if argument is numberic
+#' If argument is multicolumn data.frame check if all columns are numeric
+#' @param any
+#' @return true if parameter is numeric. Overwise return false
 is_numeric <- function(data) {
   tmp <- lapply(data, is.numeric)
   for(i in tmp)
@@ -49,14 +73,18 @@ is_numeric <- function(data) {
   return(TRUE)
 }
 
-
-
+#' fetch unique values in single column and return their number
+#' @param single column as list
+#' @return number of unique values in column
 number_of_unique_value <- function(col) {
   count <- unique(col)
   count <- length(count[[1]])
   return(count)
 }
 
+#' transform this columns which have less or equals number of unique values 
+#' @param data.frame
+#' @return modified data.frame
 transform_to_factor <- function(data, required_unique_number = 5) {
   for( col_number in 1:ncol(data))
   {
@@ -68,6 +96,9 @@ transform_to_factor <- function(data, required_unique_number = 5) {
   return(data)
 }
 
+#' fill empty rows in columns with NA symbol
+#' @param data.frame
+#' @return modified data.frame
 fill_empty_with_NA <- function(data) {
   for( col_number in 1:ncol(data))
   {
