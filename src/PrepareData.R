@@ -118,6 +118,19 @@ fill_empty_with_NA <- function(data) {
 }
 
 
+#' normalize continuse data
+#' @param data.frame
+#' @return modified data.frame
+normalize <- function(data) {
+  for( col_number in 1:ncol(data))
+  {
+    if(is_numeric(data[col_number]))
+    {
+      data[col_number] <- scale(data[col_number])
+    }
+  }
+  return(data)
+}
 
 
 
