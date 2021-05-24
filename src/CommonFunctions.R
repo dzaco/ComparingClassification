@@ -16,6 +16,10 @@ install_packages <- function() {
   if(length(new.packages)) install.packages(new.packages)
   else print("already have all the packages")
   
+  for (pack in list.of.packages) {
+    library(pack, character.only = TRUE)
+  }
+  
   list.of.sourcefile <- c(
     "src/PrepareData.R",
     "src/CreateDatasets.R",
