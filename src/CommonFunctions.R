@@ -9,7 +9,8 @@ install_packages <- function() {
     "randomForest",
     
     "devtools",
-    "roxygen2"
+    "roxygen2",
+    "rlang"
   )
   
   new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
