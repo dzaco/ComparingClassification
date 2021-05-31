@@ -10,7 +10,8 @@ install_packages <- function() {
     
     "devtools",
     "roxygen2",
-    "rlang"
+    "rlang",
+    "corrplot"
   )
   
   new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
