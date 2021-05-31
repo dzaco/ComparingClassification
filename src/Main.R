@@ -22,7 +22,7 @@ X_test = remove_column(test , cl_name)    # data without result class
 Y_train = train[, cl_name]                # data of result class
 Y_test = test[,cl_name]                   # data of result class
 
-time.table <- data.frame(
+scoreboard <- data.frame(
  algorithm = I(c(NA,NA,NA,NA)),
  time = c(NA,NA,NA,NA),
  accuracy = c(NA,NA,NA,NA)
@@ -83,9 +83,9 @@ random_forest_accuracy
 accuracies <- c(accuracies, random_forest_accuracy)
 
 
-time.table$algorithm <- algorithms
-time.table$time <- times
-time.table$accuracy <- accuracies
+scoreboard$algorithm <- algorithms
+scoreboard$time <- times
+scoreboard$accuracy <- accuracies
 
 
 which(preds.rpart != preds.knn)
