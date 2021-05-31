@@ -25,8 +25,7 @@ install_packages <- function() {
     "src/Classifications.R",
     "src/CreateDatasets.R",
     "src/PrepareData.R",
-    "src/Visualisation.R",
-    "src/knn.R"
+    "src/Visualisation.R"
   )
   
   for (file in list.of.sourcefile) {
