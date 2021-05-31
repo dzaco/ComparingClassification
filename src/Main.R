@@ -24,10 +24,12 @@ Y_test = test[,cl_name]                   # data of result class
 
 time.table <- data.frame(
  algorithm = I(c(NA,NA,NA,NA)),
- time = c(NA,NA,NA,NA)
+ time = c(NA,NA,NA,NA),
+ accuracy = c(NA,NA,NA,NA)
  )
 algorithms <- c()
 times <- c()
+accuracies <- c()
 
 #Decision Trees
 time.start <- Sys.time()
@@ -38,6 +40,7 @@ times <- c(times, time)
 algorithms <- c(algorithms, "decision_trees")
 decision_trees_accuracy = ((16+20+12)/nrow(test))*100
 decision_trees_accuracy
+accuracies <- c(accuracies, decision_trees_accuracy)
 
 #k-Nearest Neighbours
 time.start <- Sys.time()
@@ -55,6 +58,7 @@ times <- c(times, time)
 algorithms <- c(algorithms, "k_nearest_neighbours")
 nearest_neighbours_accuracy = ((16+19+13)/nrow(test))*100
 nearest_neighbours_accuracy
+accuracies <- c(accuracies, nearest_neighbours_accuracy)
 
 #Support Vector Machine
 time.start <- Sys.time()
@@ -65,6 +69,7 @@ times <- c(times, time)
 algorithms <- c(algorithms, "support_vector_machine")
 support_vector_machine_accuracy = ((16+20+13)/nrow(test))*100
 support_vector_machine_accuracy
+accuracies <- c(accuracies, support_vector_machine_accuracy)
 
 #Random Forest
 time.start <- Sys.time()
@@ -75,10 +80,12 @@ times <- c(times, time)
 algorithms <- c(algorithms, "random_forest")
 random_forest_accuracy = ((16+19+13)/nrow(test))*100
 random_forest_accuracy
+accuracies <- c(accuracies, random_forest_accuracy)
 
 
 time.table$algorithm <- algorithms
 time.table$time <- times
+time.table$accuracy <- accuracies
 
 
 which(preds.rpart != preds.knn)
