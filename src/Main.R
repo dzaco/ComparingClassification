@@ -7,6 +7,11 @@ summary(iris)
 train = create_train_dataset(iris, 100, 123)
 test = create_test_dataset(iris, 100, 123)
 
+cl_name = 'Species'                       #name of result class
+X_train = remove_column(train, cl_name)   # data without result class
+X_test = remove_column(test , cl_name)    # data without result class
+Y_train = train[, cl_name]                # data of result class
+Y_test = test[,cl_name]                   # data of result class
 
 time.table <- data.frame(
  algorithm = I(c(NA,NA,NA,NA)),
@@ -25,7 +30,13 @@ algorithms <- c(algorithms, "decision_trees")
 
 #k-Nearest Neighbours
 time.start <- Sys.time()
-preds.knn = k_nearest_neighbours(train[,1:4], test[,1:4], train$Species)
+# calculate accuracy for knn - to find best k
+accuracy <- accuracy_for_knn(try_number = 50, X_train, X_test, Y_train, Y_test)
+plot_accurency(accuracy)
+best_k = best.k(accuracy)
+print(paste("knn with k =",best_k))
+
+preds.knn = k_nearest_neighbours(X_train, X_test, cl = train$Species, k = best_k)
 CrossTable(preds.knn, test$Species, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
 time.end <- Sys.time()
 time <- Sys.time() - time.start

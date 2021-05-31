@@ -11,7 +11,7 @@ decision_trees <- function(formula, train, test) {
 #' Performs classification using k-Nearest Neighbours algorithm
 #' @param train, test, seed
 #' @return preds.rpart
-k_nearest_neighbours <- function(train, test, cl, seed = 123) {
+k_nearest_neighbours <- function(train, test, cl, k = 3, seed = 123) {
   library(class)
   set.seed(seed)
   preds.knn = knn(train, test, cl, k=3)

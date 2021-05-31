@@ -22,13 +22,21 @@ install_packages <- function() {
   }
   
   list.of.sourcefile <- c(
-    "src/PrepareData.R",
+    "src/Classifications.R",
     "src/CreateDatasets.R",
-    "src/Classifications.R"
+    "src/PrepareData.R",
+    "src/Visualisation.R",
+    "src/knn.R"
   )
   
   for (file in list.of.sourcefile) {
     source(file)
   }
   
+}
+
+accuracy = function(actual, predicted) {
+  mean = mean(actual == predicted);
+  mean
+  return( mean )
 }

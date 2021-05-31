@@ -1,42 +1,24 @@
-data <- data.frame(titanic_train)
-data<- remove_id_columns(data)
+data(iris)
+train = create_train_dataset(iris, 100, 123)
+test = create_test_dataset(iris, 100, 123)
+cl_name = 'Species'
+X_train = remove_column(train, cl_name)
+X_test = remove_column(test , cl_name)
+Y_train = train[, cl_name]
+Y_test = test[,cl_name]
 
-for( col_number in 1:ncol(data))
-{
-  cat(col_number)
-  cat(" ")
-  cat(colnames(data[col_number]))
-  cat(" ")
-  cat(is_numeric(data[col_number]))
-  cat("\n")
+
+
+set.seed(2)
+k_to_try = 1:100
+acc_k = rep(x = 0, times = length(k_to_try))
+
+for(i in seq_along(k_to_try)) {
+  pred = knn(train = scale(X_train), 
+             test = scale(X_test), 
+             cl = Y_train, 
+             k = k_to_try[i])
+  acc_k[i] = accuracy(Y_test, pred)
 }
-
-
-col <- data[5] #@ Age
-vcol <- unlist(col)
-mean <- mean(vcol, na.rm = T)
-col[is.na(col)] <- mean(vcol, na.rm = T)
-
-
-# tests 1
-data <- titanic_train
-data <- clean(data)
-summary(data)
-
-
-
-
-####################################################################
-
-
-sex <- data[4]
-sum <- summary(sex)
-count <- unique(sex)
-count <- length(count[[1]])
-count2 <- number_of_unique_value(sex)
-
-
-
-
-
-
+plot_accurency(acc_k)
+best = best.k(acc_k)
