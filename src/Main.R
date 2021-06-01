@@ -33,7 +33,7 @@ accuracies <- c()
 
 #Decision Trees
 time.start <- Sys.time()
-preds.rpart = decision_trees(Species~., train, test)
+preds.rpart = decision_trees(Species~., train, test, 'class')
 CrossTable(test$Species, preds.rpart, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
 time <- Sys.time() - time.start
 times <- c(times, time)
@@ -105,6 +105,36 @@ summary(imports85)
 
 imports85 = clean(imports85)
 summary(imports85)
-
-cr <- cor(imports85[1:26])
+corr = sapply(imports85, function(x) as.numeric(x))
+cr <- cor(corr)
 corrplot(cr, method = "circle")
+
+train = create_train_dataset(imports85, 100, 123)
+test = create_test_dataset(imports85, 100, 123)
+
+cl_name = 'symboling'                       # name of result class
+X_train = remove_column(train, cl_name)     # data without result class
+X_test = remove_column(test , cl_name)      # data without result class
+Y_train = train[, cl_name]                  # data of result class
+Y_test = test[,cl_name]                     # data of result class
+
+scoreboard <- data.frame(
+  algorithm = I(c(NA,NA,NA,NA)),
+  time = c(NA,NA,NA,NA),
+  accuracy = c(NA,NA,NA,NA)
+)
+algorithms <- c()
+times <- c()
+accuracies <- c()
+
+#Decision Trees
+time.start <- Sys.time()
+preds.rpart = decision_trees(symboling~., train, test, 'vector')
+CrossTable(test$symboling, preds.rpart, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
+time <- Sys.time() - time.start
+times <- c(times, time)
+algorithms <- c(algorithms, "decision_trees")
+decision_trees_accuracy = ((3+28+7+5+1+27)/nrow(test))*100
+decision_trees_accuracy
+accuracies <- c(accuracies, decision_trees_accuracy)
+

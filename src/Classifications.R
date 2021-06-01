@@ -1,10 +1,10 @@
 #' Performs classification using decision tree algorithm
 #' @param formula, train, test
 #' @return preds.rpart
-decision_trees <- function(formula, train, test) {
+decision_trees <- function(formula, train, test, type) {
   library(rpart)
   model.rpart = rpart(formula, data = train)
-  preds.rpart = predict(model.rpart, newdata = test, type = "class")
+  preds.rpart = predict(model.rpart, newdata = test, type = type)
   return(preds.rpart)
 }
 
