@@ -96,13 +96,13 @@ number_of_unique_value <- function(col) {
   return(count)
 }
 
-#' transform this columns which have less or equals number of unique values 
+#' transform nonnumeric to factor
 #' @param data.frame
 #' @return modified data.frame
 transform_to_factor <- function(data, required_unique_number = 5) {
   for( col_number in 1:ncol(data))
   {
-    if(number_of_unique_value(data[col_number]) <= required_unique_number)
+    if(!is_numeric(data[col_number]))
     {
       data[col_number] <- as.factor(unlist(data[col_number]))
     }
@@ -139,5 +139,9 @@ normalize <- function(data) {
 }
 
 
-
+correlated_variables <- function(data, min_cor) {
+  corr = sapply(data, function(x) as.numeric(x))
+  cr <- cor(corr)
+  return(which(cr))
+}
 
