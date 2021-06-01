@@ -138,3 +138,67 @@ decision_trees_accuracy = ((3+28+7+5+1+27)/nrow(test))*100
 decision_trees_accuracy
 accuracies <- c(accuracies, decision_trees_accuracy)
 
+
+
+
+##################################################################
+#adults
+##################################################################
+
+adult <- read.table('https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data', 
+                    sep = ',', fill = F, strip.white = T)
+colnames(adult) <- c('age', 'workclass', 'fnlwgt', 'education', 
+                     'education_num', 'marital_status', 'occupation', 'relationship', 'race', 'sex', 
+                     'capital_gain', 'capital_loss', 'hours_per_week', 'native_country', 'income')
+summary(adult)
+
+adult = clean(adult)
+summary(adult)
+plot(adult$income)
+
+scoreboard <- data.frame(
+  algorithm = I(c(NA,NA,NA,NA)),
+  time = c(NA,NA,NA,NA),
+  accuracy = c(NA,NA,NA,NA)
+)
+algorithms <- c()
+times <- c()
+accuracies <- c()
+
+set_size <- round(.8 * dim(adult)[1])
+train <- adult[1:set_size,]
+test <- adult[-(1:set_size),]
+
+#Decision Trees
+time.start <- Sys.time()
+preds.rpart = decision_trees(income~., train, test, 'class')
+time <- Sys.time() - time.start
+times <- c(times, time)
+CrossTable(test$income, preds.rpart, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
+algorithms <- c(algorithms, "decision_trees")
+decision_trees_accuracy = ((4664+834)/nrow(test))*100
+decision_trees_accuracy
+accuracies <- c(accuracies, decision_trees_accuracy)
+
+#Support Vector Machine
+time.start <- Sys.time()
+preds.svm = support_vector_machine(income~., train, test)
+time <- Sys.time() - time.start
+times <- c(times, time)
+CrossTable(preds.svm, test$income, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
+algorithms <- c(algorithms, "support_vector_machine")
+support_vector_machine_accuracy = ((0)/nrow(test))*100
+support_vector_machine_accuracy
+accuracies <- c(accuracies, support_vector_machine_accuracy)
+
+#Random Forest
+time.start <- Sys.time()
+preds.rf = random_forest(income~., train, test)
+time <- Sys.time() - time.start
+times <- c(times, time)
+CrossTable(preds.rf, test$income, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
+algorithms <- c(algorithms, "random_forest")
+random_forest_accuracy = ((4611+1007)/nrow(test))*100
+random_forest_accuracy
+accuracies <- c(accuracies, random_forest_accuracy)
+
