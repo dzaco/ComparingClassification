@@ -33,24 +33,18 @@ remove_column <- function(data, name) {
 
 
 #' fill nan values
-#' TODO: implement fill_nan_in_nonnumeric_data(data)
 #' @param data.frame
 #' @return modified data.frame
 fill_nan <- function(data) {
-  data <- fill_nan_in_numeric_data(data)
-  
-  return(data)
-}
-
-#' fill nan values in numeric columns
-#' @param data.frame
-#' @return modified data.frame
-fill_nan_in_numeric_data <- function(data) {
   for( col_number in 1:ncol(data))
   {
     if(is_numeric(data[col_number]))
     {
       data[col_number] <- fill_nan_in_numeric_col(data[col_number])
+    }
+    else
+    {
+      data[col_number] <- fill_nan_in_nonnumeric_col(data[col_number])
     }
   }
   return(data)
@@ -63,6 +57,18 @@ fill_nan_in_numeric_col <- function(col) {
   if(anyNA(col)) {
     col_vector <- unlist(col)
     col[is.na(col)] <- mean(col_vector, na.rm = T)
+  }
+  return(col)
+}
+
+#' fill nan values in single column
+#' @param single column as list
+#' @return modified column as list
+fill_nan_in_nonnumeric_col <- function(col) {
+  if(anyNA(col)) {
+    col_vector <- unlist(col)
+    biggest_group <- names(summary(col_vector)[1])
+    col[is.na(col)] <- biggest_group
   }
   return(col)
 }
