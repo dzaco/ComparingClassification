@@ -17,7 +17,7 @@ corrplot(cr, method = "circle")
 train = create_train_dataset(iris, 100, 123)
 test = create_test_dataset(iris, 100, 123)
 
-cl_name = 'Species'                       #name of result class
+cl_name = 'Species'                       # name of result class
 X_train = remove_column(train, cl_name)   # data without result class
 X_test = remove_column(test , cl_name)    # data without result class
 Y_train = train[, cl_name]                # data of result class
@@ -150,11 +150,7 @@ scoreboard <- data.frame(algorithms, times, accuracies)
 #adults
 ##################################################################
 
-adult <- read.table('https://archive.ics.uci.edu/ml/machine-learning-databases/adult/adult.data', 
-                    sep = ',', fill = F, strip.white = T)
-colnames(adult) <- c('age', 'workclass', 'fnlwgt', 'education', 
-                     'education_num', 'marital_status', 'occupation', 'relationship', 'race', 'sex', 
-                     'capital_gain', 'capital_loss', 'hours_per_week', 'native_country', 'income')
+adult <- read.csv(file = 'datasets/adult.csv')
 summary(adult)
 
 adult = clean(adult)
@@ -169,6 +165,12 @@ set_size <- round(.8 * dim(adult)[1])
 train <- adult[1:set_size,]
 test <- adult[-(1:set_size),]
 
+cl_name = 'income'                        # name of result class
+X_train = remove_column(adult, cl_name)   # data without result class
+X_test = remove_column(adult , cl_name)   # data without result class
+Y_train = adult[, cl_name]                # data of result class
+Y_test = adult[,cl_name]                  # data of result class
+
 #Decision Trees
 time.start <- Sys.time()
 preds.rpart = decision_trees(income~., train, test, 'class')
@@ -179,6 +181,18 @@ algorithms <- c(algorithms, "decision_trees")
 decision_trees_accuracy = accuracy.cross_table(cross_table, test)
 decision_trees_accuracy
 accuracies <- c(accuracies, decision_trees_accuracy)
+
+#k-Nearest Neighbours
+time.start <- Sys.time()
+preds.knn = k_nearest_neighbours(X_train, X_test, Y_train, Y_test)
+cross_table = CrossTable(preds.knn, Y_test, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
+time.end <- Sys.time()
+time <- Sys.time() - time.start
+times <- c(times, time)
+algorithms <- c(algorithms, "k_nearest_neighbours")
+nearest_neighbours_accuracy = accuracy.cross_table(cross_table, test)
+nearest_neighbours_accuracy
+accuracies <- c(accuracies, nearest_neighbours_accuracy)
 
 #Support Vector Machine
 time.start <- Sys.time()
