@@ -64,7 +64,7 @@ accuracies <- c(accuracies, nearest_neighbours_accuracy)
 #Support Vector Machine
 time.start <- Sys.time()
 preds.svm = support_vector_machine(Species~., train, test)
-cross_table = CrossTable(preds.svm,test$Species, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
+cross_table = CrossTable(test$Species, preds.svm, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
 time <- Sys.time() - time.start
 times <- c(times, time)
 algorithms <- c(algorithms, "support_vector_machine")
@@ -76,7 +76,7 @@ accuracies <- c(accuracies, support_vector_machine_accuracy)
 #Random Forest
 time.start <- Sys.time()
 preds.rf = random_forest(Species~., train, test)
-cross_table = CrossTable(preds.rf, test$Species, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
+cross_table = CrossTable(test$Species, preds.rf, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
 time <- Sys.time() - time.start
 times <- c(times, time)
 algorithms <- c(algorithms, "random_forest")
@@ -186,6 +186,10 @@ adult = clean(adult)
 summary(adult)
 plot(adult$income)
 
+numeric <- sapply(adult, is.numeric)
+cr <- cor(adult[,numeric])
+corrplot(cr)
+
 algorithms <- c()
 times <- c()
 accuracies <- c()
@@ -231,7 +235,7 @@ time.start <- Sys.time()
 preds.svm = support_vector_machine(income~., train, test)
 time <- Sys.time() - time.start
 times <- c(times, time)
-cross_table = CrossTable(preds.svm, test$income, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
+cross_table = CrossTable(test$income, preds.svm, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
 algorithms <- c(algorithms, "support_vector_machine")
 support_vector_machine_accuracy = accuracy.cross_table(cross_table, test)
 support_vector_machine_accuracy
@@ -243,87 +247,7 @@ time.start <- Sys.time()
 preds.rf = random_forest(income~., train, test)
 time <- Sys.time() - time.start
 times <- c(times, time)
-cross_table = CrossTable(preds.rf, test$income, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
-algorithms <- c(algorithms, "random_forest")
-random_forest_accuracy = accuracy.cross_table(cross_table, test)
-random_forest_accuracy
-accuracies <- c(accuracies, random_forest_accuracy)
-
-
-scoreboard <- data.frame(algorithms, times, accuracies)
-
-
-##################################################################
-#dressify
-##################################################################
-
-dressify <- read.csv(file = 'datasets/train_dress.csv')
-summary(dressify)
-
-dressify = clean(dressify)
-summary(dressify)
-
-corr = sapply(dressify, function(x) as.numeric(x))
-cr <- cor(corr)
-corrplot(cr, method = "circle")
-
-algorithms <- c()
-times <- c()
-accuracies <- c()
-
-train = create_train_dataset(dressify, 100, 123)
-test = create_test_dataset(dressify, 100, 123)
-
-cl_name = 'Recommended'                       # name of result class
-X_train = train[, c('numOfDoors', 'bodyStyle', 'wheelBase','height')]
-X_test = test[, c('numOfDoors', 'bodyStyle', 'wheelBase','height')]
-Y_train = train[, cl_name]                  # data of result class
-Y_test = test[,cl_name]                     # data of result class
-
-
-#Decision Trees
-time.start <- Sys.time()
-preds.rpart = decision_trees(Recommended~., train, test, 'vector')
-cross_table = CrossTable(test$Recommended, preds.rpart, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
-time <- Sys.time() - time.start
-times <- c(times, time)
-algorithms <- c(algorithms, "decision_trees")
-decision_trees_accuracy = accuracy.cross_table(cross_table, test)
-decision_trees_accuracy
-accuracies <- c(accuracies, decision_trees_accuracy)
-
-
-#k-Nearest Neighbours
-time.start <- Sys.time()
-preds.knn = k_nearest_neighbours(X_train, X_test, Y_train, Y_test)
-cross_table = CrossTable(preds.knn, Y_test, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
-time.end <- Sys.time()
-time <- Sys.time() - time.start
-times <- c(times, time)
-algorithms <- c(algorithms, "k_nearest_neighbours")
-nearest_neighbours_accuracy = accuracy.cross_table(cross_table, test)
-nearest_neighbours_accuracy
-accuracies <- c(accuracies, nearest_neighbours_accuracy)
-
-
-#Support Vector Machine
-time.start <- Sys.time()
-preds.svm = support_vector_machine(Recommended~., train, test)
-cross_table = CrossTable(preds.svm,test$Recommended, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
-time <- Sys.time() - time.start
-times <- c(times, time)
-algorithms <- c(algorithms, "support_vector_machine")
-support_vector_machine_accuracy = accuracy.cross_table(cross_table, test)
-support_vector_machine_accuracy
-accuracies <- c(accuracies, support_vector_machine_accuracy)
-
-
-#Random Forest
-time.start <- Sys.time()
-preds.rf = random_forest(Recommended~., train, test)
-cross_table = CrossTable(preds.rf, test$Recommended, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
-time <- Sys.time() - time.start
-times <- c(times, time)
+cross_table = CrossTable(test$income, preds.rf, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
 algorithms <- c(algorithms, "random_forest")
 random_forest_accuracy = accuracy.cross_table(cross_table, test)
 random_forest_accuracy
