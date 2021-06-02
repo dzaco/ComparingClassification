@@ -24,9 +24,14 @@ remove_column <- function(data, idx) {
 #' remove column with colname == name
 #' @param data.frame
 #' @return modified data.frame
-remove_column <- function(data, name) {
-  idx <- which(colnames(data) == name)
-  data = data[, -idx]
+remove_column <- function(data, names) {
+  idxs <- c()
+  for(name in names)
+  {
+    idx <- which(colnames(data) == name)
+    idxs <- c(idxs, idx)
+  }
+  data = data[, -idxs]
   return(data)
 }
 
