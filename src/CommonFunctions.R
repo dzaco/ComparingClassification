@@ -35,8 +35,9 @@ install_packages <- function() {
   
 }
 
-accuracy = function(actual, predicted) {
-  mean = mean(actual == predicted);
-  mean
-  return( mean )
+accuracy <- function(x){sum(diag(x)/(sum(rowSums(x)))) * 100}
+
+min_max_scale <- function(x)
+{
+  return ((x - min(x))/(max(x)-min(x)))
 }
