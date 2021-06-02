@@ -44,28 +44,30 @@ summary(dressify)
 
 table(dressify$Recommended, useNA = "ifany")
 
-
-
-#######################
-## 2. NORMALIZE DATA ##
-#######################
-
-Recommended <- dressify$Recommended
-dressify <- normalize(dressify)
-dressify$Recommended <- Recommended
-
-###################
-## 3. SPLIT DATA ##
-###################
+#################
+## correlation ##
+#################
 
 dressify.corr <- sapply(dressify, function(x) as.numeric(x))
 corr <- cor(dressify.corr)
 corrplot(corr, method = "circle")
+corr[,which(colnames(dressify) == "Recommended")]
 
-train = create_train_dataset(dressify, 100, 123)
-test = create_test_dataset(dressify, 100, 123)
-train.target = train$Recommended
-test.target = test$Recommended
+###################
+## SPLIT DATA ##
+###################
+
+train = create_train_dataset(dressify.corr, 200, 123)
+test = create_test_dataset(dressify.corr, 200, 123)
+train.target = train[,'Recommended']
+test.target = test[,'Recommended']
 train <- remove_column(train, 'Recommended')
 test <- remove_column(test, 'Recommended')
+
+#########
+## KNN ##
+#########
+
+knn.4 <- knn(train,test, cl = train.target, k = 4)
+acc.4 <- 100 * sum(test.target == knn.4) / NROW(test.target)
 
