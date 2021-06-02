@@ -29,26 +29,15 @@ k_nearest_neighbours <- function(X_train, X_test, Y_train, Y_test, try_number = 
 
 #' calculate accuracy of knn algorithm for k from 1 to try_number
 #' @return list of accuracy
-accuracy_for_knn = function(X_train, X_test, Y_train, Y_test, try_number = 100) {
-  accuracy = function(actual, predicted) {
-    return(mean(actual == predicted))
+accuracy_for_knn = function(train, test, train.target, test.target, try_number = 50) {
+  i = 1
+  k.optm = 1
+  for(i in 1:try_number ) {
+    knn.pred <- knn(train, test, cl = train.target, k = i)
+    k.optm[i] <- 100 * sum(test.target == knn.pred) / NROW(test.target)
   }
-  set.seed(2)
-  
-  k_to_try = 1:try_number
-  acc_k = rep(x = 0, times = length(k_to_try))
-  
-  sapply(X_train, class)
-  
-  for(i in seq_along(k_to_try)) {
-    pred = knn(train = X_train, 
-               test = X_test, 
-               cl = y_train, 
-               k = k_to_try[i])
-    acc_k[i] = accuracy(Y_test, pred)
-  }
-  
-  return(acc_k)
+  plot_accurency(k.optm)
+  return(k.optm)
 }
 
 #' @return best k from accuracy list (max)

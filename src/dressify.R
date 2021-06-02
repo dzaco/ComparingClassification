@@ -64,10 +64,34 @@ test.target = test[,'Recommended']
 train <- remove_column(train, 'Recommended')
 test <- remove_column(test, 'Recommended')
 
+
+##################################
+## INIT VECTORS OF MEASUREMENTS ##
+##################################
+times <- c()
+algorithms <- c()
+accuracies <- c()
+
 #########
 ## KNN ##
 #########
+algorithms <- c(algorithms, "k_nearest_neighbours")
+time.start <- Sys.time()
 
-knn.4 <- knn(train,test, cl = train.target, k = 4)
-acc.4 <- 100 * sum(test.target == knn.4) / NROW(test.target)
+k.acc <- accuracy_for_knn(train, test, train.target, test.target)
+k.best <- best.k(k.acc)
+knn.best <- knn(train, test, cl = train.target, k = k.best)
+
+time <- Sys.time() - time.start
+times <- c(times, time)
+
+cross_table = CrossTable(knn.best, test.target, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
+nearest_neighbours_accuracy = accuracy.cross_table(cross_table, test)
+nearest_neighbours_accuracy
+accuracies <- c(accuracies, nearest_neighbours_accuracy)
+
+
+
+
+
 
