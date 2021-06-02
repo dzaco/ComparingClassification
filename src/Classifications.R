@@ -14,40 +14,36 @@ decision_trees <- function(formula, train, test, type) {
 k_nearest_neighbours <- function(X_train, X_test, Y_train, Y_test, try_number = 100, seed = 123) {
   library(class)
   set.seed(seed)
-  #preds.knn = knn(train, test, cl, k)
-  k_to_try = 1:try_number
-  acc_k = rep(x = 0, times = length(k_to_try))
-  acc.best = 0
   
-  for(i in seq_along(k_to_try)) {
-    pred = knn(train = scale(sapply(X_train, function(x) as.numeric(x))), 
-               test = scale(sapply(X_test, function(x) as.numeric(x))), 
-               cl = Y_train, 
-               k = k_to_try[i])
-    acc_k[i] = accuracy(Y_test, pred)
-    if(acc_k[i] > acc.best){
-      acc.best = acc_k[i]
-      pred.best = pred
-      k.best = i
-    }
-  }
+  acc <- accuracy_for_knn(X_train, X_test, Y_train, Y_test, try_number)
+  plot_accurency(acc)
+  best.k = best.k(acc)
+  print(paste("knn with k =",best.k))
   
-  print(paste("knn with k =",k.best))
-  plot_accurency(acc_k)
-  return(pred.best)
+  preds.knn = knn(train = scale(sapply(X_train, function(x) as.numeric(x))),
+                 test = scale(sapply(X_test, function(x) as.numeric(x))),
+                 cl = Y_train, 
+                 k = best.k)
+  return(preds.knn)
 }
 
 #' calculate accuracy of knn algorithm for k from 1 to try_number
 #' @return list of accuracy
-accuracy_for_knn = function(try_number , X_train, X_test, Y_train, Y_test) {
+accuracy_for_knn = function(X_train, X_test, Y_train, Y_test, try_number = 100) {
+  accuracy = function(actual, predicted) {
+    return(mean(actual == predicted))
+  }
   set.seed(2)
+  
   k_to_try = 1:try_number
   acc_k = rep(x = 0, times = length(k_to_try))
   
+  sapply(X_train, class)
+  
   for(i in seq_along(k_to_try)) {
-    pred = knn(train = scale(sapply(X_train, function(x) as.numeric(x))), 
-               test = scale(sapply(X_test, function(x) as.numeric(x))), 
-               cl = Y_train, 
+    pred = knn(train = X_train, 
+               test = X_test, 
+               cl = y_train, 
                k = k_to_try[i])
     acc_k[i] = accuracy(Y_test, pred)
   }
