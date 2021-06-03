@@ -1,3 +1,5 @@
+source("src/CommonFunctions.R")
+install_packages()
 
 ##################################################################
 #dressify
@@ -89,8 +91,6 @@ cross_table = CrossTable(knn.best, test.target, chisq = F, prop.r = F, prop.c = 
 nearest_neighbours_accuracy = accuracy.cross_table(cross_table, test)
 nearest_neighbours_accuracy
 accuracies <- c(accuracies, nearest_neighbours_accuracy)
-
-
 
 
 
