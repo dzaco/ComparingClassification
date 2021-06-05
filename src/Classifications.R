@@ -30,6 +30,7 @@ k_nearest_neighbours <- function(X_train, X_test, Y_train, Y_test, try_number = 
 #' calculate accuracy of knn algorithm for k from 1 to try_number
 #' @return list of accuracy
 accuracy_for_knn = function(train, test, train.target, test.target, try_number = 50) {
+  set.seed(123)
   i = 1
   k.optm = 1
   for(i in 1:try_number ) {
