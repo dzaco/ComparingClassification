@@ -84,7 +84,7 @@ k.acc <- accuracy_for_knn(train, test, train.target, test.target)
 k.best <- best.k(k.acc)
 knn.best <- knn(train, test, cl = train.target, k = k.best)
 
-time <- Sys.time() - time.start
+time <- difftime(Sys.time(), time.start, units = "secs")[[1]]
 times <- c(times, time)
 
 cross_table = CrossTable(knn.best, test.target, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
