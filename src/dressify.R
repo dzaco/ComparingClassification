@@ -1,5 +1,5 @@
-source("src/CommonFunctions.R")
-install_packages()
+# source("src/CommonFunctions.R")
+# install_packages()
 
 ##################################################################
 #dressify
@@ -59,39 +59,92 @@ corr[,which(colnames(dressify) == "Recommended")]
 ## SPLIT DATA ##
 ###################
 
-train = create_train_dataset(dressify.corr, 200, 123)
-test = create_test_dataset(dressify.corr, 200, 123)
+train = create_train_dataset(dressify, 200, 123)
+test = create_test_dataset(dressify, 200, 123)
 train.target = train[,'Recommended']
 test.target = test[,'Recommended']
-train <- remove_column(train, 'Recommended')
-test <- remove_column(test, 'Recommended')
+# train <- remove_column(train, 'Recommended')
+# test <- remove_column(test, 'Recommended')
+
+train.knn = sapply(train, function(x) as.numeric(x))
+test.knn = sapply(train, function(x) as.numeric(x))
+train.knn.target = train.knn[,'Recommended']
+test.knn.target = test.knn[,'Recommended']
+train.knn <- remove_column(train.knn, 'Recommended')
+test.knn <- remove_column(test.knn, 'Recommended')
 
 
-##################################
-## INIT VECTORS OF MEASUREMENTS ##
-##################################
-times <- c()
-algorithms <- c()
-accuracies <- c()
 
 #########
 ## KNN ##
 #########
-algorithms <- c(algorithms, "k_nearest_neighbours")
+
+algorithm_name <- "k_nearest_neighbours"
 time.start <- Sys.time()
 
-k.acc <- accuracy_for_knn(train, test, train.target, test.target)
+k.acc <- accuracy_for_knn(train.knn, test.knn, train.knn.target, test.knn.target)
 k.best <- best.k(k.acc)
-knn.best <- knn(train, test, cl = train.target, k = k.best)
+knn.best <- knn(train.knn, test.knn, cl = train.knn.target, k = k.best)
 
 time <- difftime(Sys.time(), time.start, units = "secs")[[1]]
-times <- c(times, time)
 
-cross_table = CrossTable(knn.best, test.target, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
-nearest_neighbours_accuracy = accuracy.cross_table(cross_table, test)
+cross_table = CrossTable(knn.best, test.knn.target, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
+nearest_neighbours_accuracy = accuracy.cross_table(cross_table, test.knn)
 nearest_neighbours_accuracy
-accuracies <- c(accuracies, nearest_neighbours_accuracy)
+
+scoreboard[nrow(scoreboard) + 1,] = c(algorithm_name, time, nearest_neighbours_accuracy, "dressify")
 
 
+
+###################
+## DECISION TREE ##
+###################
+
+algorithm_name <- "decision_trees"
+time.start <- Sys.time()
+
+preds.rpart = decision_trees(Recommended~., train, test, 'class')
+time <- Sys.time() - time.start
+
+cross_table = CrossTable(test$Recommended, preds.rpart, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
+decision_trees_accuracy = accuracy.cross_table(cross_table, test)
+decision_trees_accuracy
+
+scoreboard[nrow(scoreboard) + 1,] = c(algorithm_name, time, decision_trees_accuracy, "dressify")
+
+
+
+############################
+## SUPPORT VECTOR MACHINE ##
+############################
+
+algorithm_name <- "support_vector_machine"
+time.start <- Sys.time()
+
+preds.svm = support_vector_machine(Recommended~., train, test)
+time <- Sys.time() - time.start
+
+cross_table = CrossTable(test$Recommended, preds.svm, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
+support_vector_machine_accuracy = accuracy.cross_table(cross_table, test)
+support_vector_machine_accuracy
+
+scoreboard[nrow(scoreboard) + 1,] = c(algorithm_name, time, support_vector_machine_accuracy, "dressify")
+
+
+###################
+## RANDOM FOREST ##
+###################
+
+algorithm_name <- "random_forest"
+time.start <- Sys.time()
+
+preds.rf = random_forest(Recommended~., train, test)
+time <- Sys.time() - time.start
+
+cross_table = CrossTable(test$Recommended, preds.rf, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
+random_forest_accuracy = accuracy.cross_table(cross_table, test)
+random_forest_accuracy
+
+scoreboard[nrow(scoreboard) + 1,] = c(algorithm_name, time, random_forest_accuracy, "dressify")
 
 
