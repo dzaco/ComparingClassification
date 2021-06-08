@@ -1,5 +1,5 @@
-source("src/CommonFunctions.R")
-install_packages()
+# source("src/CommonFunctions.R")
+# install_packages()
 
 ##################################################################
 #adults
@@ -40,47 +40,87 @@ corr[ , which(colnames(adult) == "income")]
 ################
 
 per70 <- floor(NROW(adult.corr) * 0.7)
-train = create_train_dataset(adult.corr, per70, 123)
-test = create_test_dataset(adult.corr, per70, 123)
+train = create_train_dataset(adult, per70, 123)
+test = create_test_dataset(adult, per70, 123)
 train.target = train[,'income']
 test.target = test[,'income']
-train <- remove_column(train, 'income')
-test <- remove_column(test, 'income')
+# train <- remove_column(train, 'income')
+# test <- remove_column(test, 'income')
 
+train.knn = sapply(adult, function(x) as.numeric(x))
+test.knn = sapply(adult, function(x) as.numeric(x))
+train.knn.target = train[,'income']
+test.knn.target = test[,'income']
+train.knn <- remove_column(train, 'income')
+test.knn <- remove_column(test, 'income')
 
-##################################
-## INIT VECTORS OF MEASUREMENTS ##
-##################################
-times <- c()
-algorithms <- c()
-accuracies <- c()
 
 #########
 ## KNN ##
 #########
-algorithms <- c(algorithms, "k_nearest_neighbours")
+algorithm_name <- "k_nearest_neighbours"
 time.start <- Sys.time()
 
-k.acc <- accuracy_for_knn(train, test, train.target, test.target)
+k.acc <- accuracy_for_knn(train.knn, test.knn, train.knn.target, test.knn.target)
 k.best <- best.k(k.acc)
-knn.best <- knn(train, test, cl = train.target, k = k.best)
+knn.best <- knn(train.knn, test.knn, cl = train.knn.target, k = k.best)
 
 time <- difftime(Sys.time(), time.start, units = "secs")[[1]]
-times <- c(times, time)
 
-cross_table = CrossTable(knn.best, test.target, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
-nearest_neighbours_accuracy = accuracy.cross_table(cross_table, test)
+cross_table = CrossTable(knn.best, test.knn.target, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
+nearest_neighbours_accuracy = accuracy.cross_table(cross_table, test.knn)
 nearest_neighbours_accuracy
-accuracies <- c(accuracies, nearest_neighbours_accuracy)
+
+scoreboard[nrow(scoreboard) + 1,] = c(algorithm_name, time, nearest_neighbours_accuracy, "adult")
 
 
-##################
-## MEASUREMENTS ##
-##################
+###################
+## DECISION TREE ##
+###################
 
-scoreboard <- data.frame(algorithms, times, accuracies)
+algorithm_name <- "decision_trees"
+time.start <- Sys.time()
+
+preds.rpart = decision_trees(income~., train, test, 'class')
+time <- Sys.time() - time.start
+
+cross_table = CrossTable(test$income, preds.rpart, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
+decision_trees_accuracy = accuracy.cross_table(cross_table, test)
+decision_trees_accuracy
+
+scoreboard[nrow(scoreboard) + 1,] = c(algorithm_name, time, decision_trees_accuracy, "adult")
 
 
 
+############################
+## SUPPORT VECTOR MACHINE ##
+############################
+
+algorithm_name <- "support_vector_machine"
+time.start <- Sys.time()
+
+preds.svm = support_vector_machine(income~., train, test)
+time <- Sys.time() - time.start
+
+cross_table = CrossTable(test$income, preds.svm, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
+support_vector_machine_accuracy = accuracy.cross_table(cross_table, test)
+support_vector_machine_accuracy
+
+scoreboard[nrow(scoreboard) + 1,] = c(algorithm_name, time, support_vector_machine_accuracy, "adult")
 
 
+###################
+## RANDOM FOREST ##
+###################
+
+algorithm_NAME <- "random_forest"
+time.start <- Sys.time()
+
+preds.rf = random_forest(income~., train, test)
+time <- Sys.time() - time.start
+
+cross_table = CrossTable(test$income, preds.rf, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
+random_forest_accuracy = accuracy.cross_table(cross_table, test)
+random_forest_accuracy
+
+scoreboard[nrow(scoreboard) + 1,] = c(algorithm_name, time, random_forest_accuracy, "adult")
