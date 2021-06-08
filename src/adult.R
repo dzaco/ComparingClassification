@@ -39,20 +39,20 @@ corr[ , which(colnames(adult) == "income")]
 ## SPLIT DATA ##
 ################
 
-per70 <- floor(NROW(adult.corr) * 0.7)
-train = create_train_dataset(adult.corr, per70, 123)
-test = create_test_dataset(adult.corr, per70, 123)
+per70 <- floor(NROW(adult) * 0.7)
+train = create_train_dataset(adult, per70, 123)
+test = create_test_dataset(adult, per70, 123)
 train.target = train[,'income']
 test.target = test[,'income']
 # train <- remove_column(train, 'income')
 # test <- remove_column(test, 'income')
 
-train.knn = sapply(adult, function(x) as.numeric(x))
-test.knn = sapply(adult, function(x) as.numeric(x))
-train.knn.target = train[,'income']
-test.knn.target = test[,'income']
-train.knn <- remove_column(train, 'income')
-test.knn <- remove_column(test, 'income')
+train.knn = sapply(train, function(x) as.numeric(x))
+test.knn = sapply(test, function(x) as.numeric(x))
+train.knn.target = train.knn[,'income']
+test.knn.target = test.knn[,'income']
+train.knn <- remove_column(train.knn, 'income')
+test.knn <- remove_column(test.knn, 'income')
 
 
 #########
@@ -64,6 +64,7 @@ time.start <- Sys.time()
 k.acc <- accuracy_for_knn(train.knn, test.knn, train.knn.target, test.knn.target)
 k.best <- best.k(k.acc)
 knn.best <- knn(train.knn, test.knn, cl = train.knn.target, k = k.best)
+knn.best
 
 time <- difftime(Sys.time(), time.start, units = "secs")[[1]]
 
@@ -82,7 +83,7 @@ algorithm_name <- "decision_trees"
 time.start <- Sys.time()
 
 preds.rpart = decision_trees(income~., train, test, 'class')
-time <- Sys.time() - time.start
+time <- difftime(Sys.time(), time.start, units = "secs")[[1]]
 
 cross_table = CrossTable(test$income, preds.rpart, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
 decision_trees_accuracy = accuracy.cross_table(cross_table, test)
@@ -100,7 +101,7 @@ algorithm_name <- "support_vector_machine"
 time.start <- Sys.time()
 
 preds.svm = support_vector_machine(income~., train, test)
-time <- Sys.time() - time.start
+time <- difftime(Sys.time(), time.start, units = "secs")[[1]]
 
 cross_table = CrossTable(test$income, preds.svm, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
 support_vector_machine_accuracy = accuracy.cross_table(cross_table, test)
@@ -117,10 +118,11 @@ algorithm_NAME <- "random_forest"
 time.start <- Sys.time()
 
 preds.rf = random_forest(income~., train, test)
-time <- Sys.time() - time.start
+time <- difftime(Sys.time(), time.start, units = "secs")[[1]]
 
 cross_table = CrossTable(test$income, preds.rf, chisq = F, prop.r = F, prop.c = F, prop.t = F, prop.chisq = F)
 random_forest_accuracy = accuracy.cross_table(cross_table, test)
 random_forest_accuracy
 
 scoreboard[nrow(scoreboard) + 1,] = c(algorithm_name, time, random_forest_accuracy, "adult")
+

@@ -67,12 +67,14 @@ test.target = test[,'Recommended']
 # test <- remove_column(test, 'Recommended')
 
 train.knn = sapply(train, function(x) as.numeric(x))
-test.knn = sapply(train, function(x) as.numeric(x))
+test.knn = sapply(test, function(x) as.numeric(x))
 train.knn.target = train.knn[,'Recommended']
 test.knn.target = test.knn[,'Recommended']
 train.knn <- remove_column(train.knn, 'Recommended')
 test.knn <- remove_column(test.knn, 'Recommended')
 
+train$Recommended <- as.factor(train$Recommended)
+test$Recommended <- as.factor(test$Recommended)
 
 
 #########
@@ -85,6 +87,7 @@ time.start <- Sys.time()
 k.acc <- accuracy_for_knn(train.knn, test.knn, train.knn.target, test.knn.target)
 k.best <- best.k(k.acc)
 knn.best <- knn(train.knn, test.knn, cl = train.knn.target, k = k.best)
+knn.best
 
 time <- difftime(Sys.time(), time.start, units = "secs")[[1]]
 
@@ -102,6 +105,7 @@ scoreboard[nrow(scoreboard) + 1,] = c(algorithm_name, time, nearest_neighbours_a
 
 algorithm_name <- "decision_trees"
 time.start <- Sys.time()
+
 
 preds.rpart = decision_trees(Recommended~., train, test, 'class')
 time <- Sys.time() - time.start

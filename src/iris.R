@@ -14,6 +14,15 @@ summary(iris)
 cr <- cor(iris[1:4])
 corrplot(cr, method = "circle")
 
+###############
+## NORMALIZE ##
+###############
+
+iris.target = iris$Species
+iris <- normalize(iris)
+iris$Species = iris.target
+summary(iris)
+
 ################
 ## SPLIT DATA ##
 ################
