@@ -114,7 +114,7 @@ scoreboard[nrow(scoreboard) + 1,] = c(algorithm_name, time, support_vector_machi
 ## RANDOM FOREST ##
 ###################
 
-algorithm_NAME <- "random_forest"
+algorithm_name <- "random_forest"
 time.start <- Sys.time()
 
 preds.rf = random_forest(income~., train, test)
